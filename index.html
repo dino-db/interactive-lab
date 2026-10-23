@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080c18">
+  <meta name="description" content="A modern interactive Python workspace. Code, run, explore — PDB Labs, Engineering the Future.">
+  <title>Python Playground & Algorithm Lab — PDB Labs (BETA)</title>
+  <link rel="icon" type="image/png" href="./assets/pdb-labs-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./app.css">
+  <link rel="stylesheet" href="./v2.css">
+  <link rel="stylesheet" href="./algorithms.css">
+  <link rel="stylesheet" href="./v4.css">
+</head>
+<body>
+  <div class="app-shell" id="app-shell">
+    <div id="mobile-backdrop" class="mobile-backdrop" hidden></div>
+    <aside class="sidebar" id="sidebar" aria-label="Playground navigation">
+      <div class="brand-row">
+        <a class="brand" href="https://placidodiblasi-engineer.dev/portfolio.html#pdb-labs" title="PDB Labs portfolio">
+          <img class="brand-logo" src="./assets/pdb-labs-logo.png" alt="PDB Labs — Engineering the Future">
+          <span class="brand-wordmark"><strong>PDB <em>LABS</em></strong><small>ENGINEERING THE FUTURE</small></span>
+        </a>
+        <button id="sidebar-close" class="sidebar-collapse" type="button" title="Collapse sidebar" aria-label="Collapse sidebar">‹</button>
+      </div>
+      <div class="sidebar-label">WORKSPACE</div>
+      <button class="nav-item active workspace-nav" id="nav-code" type="button" aria-current="page" title="Python Playground"><span class="nav-icon">⌘</span><span class="nav-text">Python Playground</span><span class="nav-dot"></span></button>
+      <button class="nav-item workspace-nav" id="nav-algorithms" type="button" title="Algorithm Lab"><span class="nav-icon">◇</span><span class="nav-text">Algorithm Lab</span><span class="nav-new">NEW</span></button>
+      <div class="sidebar-label examples-label">EXPLORE & LEARN</div>
+      <nav id="examples" class="examples" aria-label="Code examples"></nav>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-tip"><span class="tip-spark">✦</span><div><strong>Make something great.</strong><small>Write code. Learn by doing.</small></div></div>
+      <div class="sidebar-note"><span class="online-indicator"></span><div><strong>Runs in your browser</strong><small>Python · WebAssembly</small></div></div>
+      <a class="back-link" href="https://placidodiblasi-engineer.dev/portfolio.html#pdb-labs">↗ <span>Back to PDB Labs</span></a>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button id="mobile-menu" class="icon-button mobile-menu" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+          <img class="mobile-logo" src="./assets/pdb-labs-logo.png" alt="PDB Labs">
+          <div class="breadcrumbs"><span class="muted">Workspace</span><span class="slash">/</span><strong id="current-workspace">Python Playground</strong><span class="beta" title="Work in progress — not yet fully tested">BETA · V4</span></div>
+        </div>
+        <div class="top-actions">
+          <button id="command-btn" class="command-trigger" type="button" title="Open command palette (Ctrl+K)"><span class="command-search">⌕</span><span class="command-label">Search commands...</span><kbd>Ctrl K</kbd></button>
+          <span class="runtime-state"><span id="runtime-dot" class="state-dot"></span><span id="runtime-label">Python not loaded</span></span>
+          <button id="focus-btn" class="icon-button" type="button" title="Focus mode (Ctrl+Shift+F)" aria-label="Toggle focus mode" aria-pressed="false">⛶</button>
+          <button id="theme-btn" class="icon-button" type="button" title="Toggle light/dark theme" aria-label="Toggle theme">◐</button>
+        </div>
+      </header>
+
+      <div id="code-workspace" class="code-workspace">
+      <div class="page-heading">
+        <div><div class="eyebrow"><span class="sparkle">✦</span> THE EXPERIMENTAL LAB <span class="heading-version">/ 01 — CODE</span></div>
+          <h1>Think it. <span>Code it.</span> Run it.</h1>
+          <p>Explore Python, test ideas, and learn by building. No setup required.</p>
+        </div>
+        <div class="python-tag"><span>◆</span> Python 3 · WebAssembly</div>
+      </div>
+
+      <div class="workspace-meta"><span><span class="meta-dot"></span> YOUR WORKSPACE</span><span class="meta-note">A place for curious minds <span>✦</span></span></div>
+
+      <div class="ide-frame" id="ide-frame">
+        <div class="ide-toolbar">
+          <div class="tab"><span class="python-symbol">Py</span><span>main.py</span><span class="tab-indicator" title="Autosaved locally"></span></div>
+          <div class="editor-actions">
+            <span id="save-status" class="save-status">Ready to code</span>
+            <button id="copy-btn" class="toolbar-button" type="button" title="Copy code">Copy</button>
+            <button id="download-btn" class="toolbar-button" type="button" title="Download Python file">↓ Export</button>
+            <button id="reset-btn" class="toolbar-button" type="button" title="Reset Python runtime and output">↺ Reset</button>
+            <button id="stop-btn" class="stop-button" type="button" title="Stop execution" hidden>■ Stop</button>
+            <button id="trace-btn" class="toolbar-button trace-button" type="button" title="Trace your Python code line by line">◇ Trace code</button>
+            <button id="run-btn" class="run-button" type="button"><span class="play-icon">▶</span> <span id="run-label">Run code</span><kbd>Ctrl ↵</kbd></button>
+          </div>
+        </div>
+        <div class="mobile-panel-tabs" role="tablist" aria-label="Workspace panels">
+          <button id="mobile-code-tab" type="button" class="mobile-panel-tab selected" role="tab" aria-selected="true" aria-controls="editor-panel">⌘ Code</button>
+          <button id="mobile-output-tab" type="button" class="mobile-panel-tab" role="tab" aria-selected="false" aria-controls="console-panel">›_ Output</button>
+        </div>
+        <div class="ide-body" id="ide-body">
+          <section class="editor-panel" id="editor-panel" aria-label="Python code editor">
+            <div class="panel-caption"><span class="tiny-dot blue"></span> EDITOR <span class="panel-caption-right">PYTHON <span class="editor-lang-dot">●</span></span></div>
+            <div id="editor" aria-label="Python source code editor"><textarea id="fallback-editor" spellcheck="false" aria-label="Python source code"></textarea></div>
+            <div class="panel-footer"><span><span class="tiny-dot green"></span> <span id="editor-mode">Editor ready</span></span><span id="line-count">1 line</span></div>
+          </section>
+          <div id="resize-handle" class="resize-handle" role="separator" aria-label="Resize editor and terminal" aria-orientation="vertical" aria-valuemin="30" aria-valuemax="75" aria-valuenow="53" tabindex="0" title="Drag to resize panels"><span class="resize-grip"></span></div>
+          <section class="console-panel" id="console-panel" aria-label="Execution output">
+            <div class="panel-caption"><span class="tiny-dot purple"></span> TERMINAL <span class="terminal-hint">python / stdout</span><button id="clear-btn" class="clear-button" type="button" title="Clear output">Clear ✕</button></div>
+            <div class="console-body" id="console" role="log" aria-live="polite" aria-relevant="additions text"><div class="terminal-welcome"><div class="terminal-glyph">›_</div><strong>Ready when you are.</strong><p>Write some Python and press <b>Run code</b> to see what happens.</p></div></div>
+            <div class="panel-footer"><span><span class="tiny-dot green"></span> <span id="console-status">Awaiting execution</span></span><span id="execution-time">stdout / stderr</span></div>
+          </section>
+        </div>
+      </div>
+      <div class="keyboard-hint"><span>⌨</span> <kbd>Ctrl</kbd> + <kbd>K</kbd> Commands <span class="hint-sep">·</span> <kbd>Ctrl</kbd> + <kbd>Enter</kbd> Run <span class="hint-sep">·</span> Drag divider to resize</div>
+      </div><!-- /code-workspace -->
+
+      <section id="algorithm-workspace" class="algorithm-workspace" aria-label="Algorithm Lab" hidden>
+        <div class="lab-heading">
+          <div>
+            <div class="eyebrow"><span class="sparkle">✦</span> THE EXPERIMENTAL LAB <span class="heading-version">/ 02 — VISUALIZE</span></div>
+            <h1>See the <span>logic.</span> Understand the code.</h1>
+            <p>Explore a growing algorithm library with step-by-step visualizations, Python examples, and an interactive execution trace.</p>
+          </div>
+          <div class="lab-label"><span class="lab-pulse"></span> INTERACTIVE LAB <span class="lab-beta">BETA</span></div>
+        </div>
+        <section class="library-browser" aria-label="Algorithm library">
+          <div class="library-top"><div><span class="library-eyebrow">EXPLORE THE LIBRARY</span><h2>Algorithm Library <span id="library-count">16 algorithms</span></h2></div><label class="library-search-label"><span aria-hidden="true">⌕</span><input id="library-search" type="search" placeholder="Search algorithms, topics, complexity…" aria-label="Search algorithms" autocomplete="off"></label></div>
+          <div id="library-categories" class="library-categories" role="group" aria-label="Filter by category"></div>
+          <div id="library-grid" class="library-grid" aria-live="polite"></div>
+          <div class="library-footer"><span id="library-results">Showing all algorithms</span><span>Select a card to explore its visualization ↓</span></div>
+        </section>
+        <div class="lab-topline"><span><span class="meta-dot"></span> ALGORITHM VISUALIZER</span><span>STEP-BY-STEP EXECUTION · NO ACCOUNT</span></div>
+        <div class="lab-shell">
+          <div class="lab-toolbar">
+            <div class="lab-algo-switch" role="group" aria-label="Choose an algorithm">
+              <button class="lab-algo active" type="button" data-algo="dijkstra" aria-pressed="true"><span>◇</span> Dijkstra</button>
+              <button class="lab-algo" type="button" data-algo="sorting" aria-pressed="false"><span>▥</span> Bubble sort</button>
+              <button class="lab-algo" type="button" data-algo="binary" aria-pressed="false"><span>⌕</span> Binary search</button>
+            </div>
+            <button class="lab-code-link" id="lab-open-code" type="button">↗ Open Python example</button>
+          </div>
+          <div class="lab-description">
+            <div><span class="lab-topic" id="lab-topic">GRAPH ALGORITHMS</span><h2 id="lab-algo-title">Dijkstra's shortest path</h2><p id="lab-algo-description">Find the shortest route through a weighted graph, exploring the nearest reachable node first.</p></div>
+            <div class="lab-complexity"><span>TIME COMPLEXITY</span><strong id="lab-complexity">O(V² + E)</strong></div>
+          </div>
+          <div class="lab-main">
+            <section class="lab-stage" aria-label="Algorithm animation">
+              <div class="lab-stage-top"><span><span class="tiny-dot blue"></span> LIVE VISUALIZATION</span><span class="lab-step-counter" id="lab-step-counter">STEP 0 / 0</span></div>
+              <div class="lab-visual" id="lab-visual" aria-label="Algorithm state visualization"></div>
+              <div class="lab-legend" id="lab-legend"></div>
+              <div class="lab-controls-extra" id="lab-controls-extra"></div>
+              <div class="lab-player">
+                <div class="lab-player-buttons">
+                  <button id="lab-reset" class="lab-player-secondary" type="button" title="Restart visualization" aria-label="Restart visualization">↺</button>
+                  <button id="lab-prev" class="lab-player-secondary" type="button" title="Previous step" aria-label="Previous step">←</button>
+                  <button id="lab-play" class="lab-player-primary" type="button" aria-label="Play animation"><span id="lab-play-icon">▶</span> <span id="lab-play-label">Play</span></button>
+                  <button id="lab-next" class="lab-player-secondary" type="button" title="Next step" aria-label="Next step">→</button>
+                </div>
+                <label class="lab-speed-label" for="lab-speed">Speed <select id="lab-speed" aria-label="Animation speed"><option value="1300">0.5×</option><option value="800" selected>1×</option><option value="400">2×</option><option value="180">4×</option></select></label>
+              </div>
+              <div class="lab-progress"><input id="lab-progress" type="range" min="0" max="1" value="0" aria-label="Go to visualization step"><div class="lab-progress-labels"><span>START</span><span id="lab-progress-percent">0%</span><span>FINISH</span></div></div>
+            </section>
+            <aside class="lab-inspector" aria-label="Algorithm details">
+              <div class="lab-inspector-heading"><span><span class="tiny-dot purple"></span> STEP INSPECTOR</span><span class="lab-live">● LIVE</span></div>
+              <div class="lab-step-detail" aria-live="polite"><span class="lab-step-kicker" id="lab-step-kicker">READY TO EXPLORE</span><h3 id="lab-step-title">Ready to explore</h3><p id="lab-step-description">Press Play or Next to step through the algorithm.</p></div>
+              <div class="lab-inspector-divider"></div>
+              <div class="lab-pseudo-heading">PSEUDOCODE <span>REFERENCE</span></div>
+              <div class="lab-pseudocode" id="lab-pseudocode" aria-label="Algorithm pseudocode"></div>
+              <div class="lab-inspector-divider"></div>
+              <div class="lab-state-heading">CURRENT STATE</div>
+              <div class="lab-state-values" id="lab-state-values"></div>
+            </aside>
+          </div>
+          <div class="lab-bottom"><span>✦ Visualizations are educational reference implementations, not traces of your editor code.</span><span>PDB Labs · Engineering the Future.</span></div>
+        </div>
+        <footer class="workspace-footer lab-footer"><span>Explore the idea. Understand the algorithm. Build the solution.</span><span>Algorithm Lab · BETA</span></footer>
+      </section>
+
+      <footer class="workspace-footer" id="global-footer"><span>Made for curious minds. <strong>PDB Labs</strong> · Engineering the Future.</span><span>Runs locally in your browser · No account needed</span></footer>
+    </main>
+  </div>
+
+  <div id="trace-overlay" class="trace-overlay" hidden>
+    <section class="trace-modal" role="dialog" aria-modal="true" aria-labelledby="trace-title">
+      <div class="trace-header"><div><span class="library-eyebrow">PYTHON VISUAL DEBUGGER · BETA</span><h2 id="trace-title">Trace your code</h2><p>Actual Python line events, variables and call stack. Trace is collected before playback.</p></div><button id="trace-close" class="trace-close" type="button" aria-label="Close debugger">✕</button></div>
+      <div class="trace-content"><section class="trace-code-panel"><div class="trace-section-title">SOURCE · main.py</div><div id="trace-code" class="trace-code" aria-label="Python source with active line"></div></section><aside class="trace-inspector"><div class="trace-section-title">EXECUTION STATE <span id="trace-status">READY</span></div><div id="trace-description" class="trace-description">Press Start trace to inspect your Python code.</div><div class="trace-section-title">LOCAL VARIABLES</div><div id="trace-variables" class="trace-variables"></div><div class="trace-section-title">CALL STACK</div><div id="trace-stack" class="trace-stack"></div></aside></div>
+      <div class="trace-controls"><button id="trace-start" class="lab-player-primary" type="button">▶ Start trace</button><button id="trace-stop" class="lab-player-secondary" type="button" hidden>■ Stop</button><button id="trace-prev" class="lab-player-secondary" type="button" aria-label="Previous trace step" disabled>←</button><button id="trace-next" class="lab-player-secondary" type="button" aria-label="Next trace step" disabled>→</button><input id="trace-progress" type="range" min="0" max="0" value="0" aria-label="Trace timeline" disabled><span id="trace-counter">0 / 0</span></div>
+      <div class="trace-disclaimer">BETA · Trace supports ordinary Python statements, functions, loops and collections. Limited to 400 events and 20 seconds. This is not a full interactive debugger or an automatic algorithm animation.</div>
+    </section>
+  </div>
+  <div id="palette-overlay" class="palette-overlay" hidden>
+    <div class="palette" role="dialog" aria-modal="true" aria-labelledby="palette-title">
+      <div class="palette-search"><span aria-hidden="true">⌕</span><label class="sr-only" id="palette-title" for="palette-input">Search commands and examples</label><input id="palette-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search commands or examples..."><kbd>ESC</kbd></div>
+      <div id="palette-list" class="palette-list" role="listbox" aria-label="Available commands"></div>
+      <div class="palette-footer"><span>↑ ↓ Navigate</span><span>↵ Select</span><span>Esc Close</span></div>
+    </div>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="./app.js"></script>
+  <script src="./library-data.js"></script>
+  <script src="./v2.js"></script>
+  <script src="./algorithms.js"></script>
+  <script src="./library-ui.js"></script>
+  <script src="./debugger.js"></script>
+</body>
+</html>
